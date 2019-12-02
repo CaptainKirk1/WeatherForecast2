@@ -72,7 +72,7 @@ namespace InterviewProject
                 {
                     Summary = summary,
                     Abbreviation = abbreviation,
-                    Date = date,
+                    Date = date.ToShortDateString(),
                     TemperatureC = tempC
                 };
             }
