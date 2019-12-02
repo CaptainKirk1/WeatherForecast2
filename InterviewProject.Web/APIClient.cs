@@ -21,14 +21,27 @@ namespace InterviewProject
             return data;
         }
 
-        public async Task<IEnumerable<string>> SearchLocation(string search)
+        public async Task<IEnumerable<string>> GetLocationList(string searchValue)
         {
-            string responseString = await ExecuteGet($"location/search/?query={search}");
+            string responseString = await ExecuteGet($"location/search/?query={searchValue}");
             var document = JsonDocument.Parse(responseString);
             var list = document.RootElement.EnumerateArray()
                 .Select(element => element.GetProperty("title").ToString())
                 .ToList();
             return list;
+        }
+
+        public async Task<int?> GetWhereOnEarthId(string locationName)
+        {
+            string responseString = await ExecuteGet($"location/search/?query={locationName}");
+            var document = JsonDocument.Parse(responseString);
+            var element = document.RootElement.EnumerateArray().FirstOrDefault();
+            if (!EqualityComparer<JsonElement>.Default.Equals(element, default) 
+                && !string.IsNullOrWhiteSpace(element.GetRawText()))
+            {
+                return element.GetProperty("woeid").GetInt32();
+            }
+            return null;
         }
 
 
