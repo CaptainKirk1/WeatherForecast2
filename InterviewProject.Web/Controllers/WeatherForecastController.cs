@@ -11,10 +11,7 @@ namespace InterviewProject.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+        private static APIClient _apiClient = new APIClient();
 
         private readonly ILogger<WeatherForecastController> _logger;
 
@@ -23,17 +20,25 @@ namespace InterviewProject.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        private async Task<IEnumerable<WeatherForecast>> GetForecastList()
         {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            int? woeid = await _apiClient.GetWhereOnEarthId("San Francisco");
+            
+            IEnumerable<WeatherForecast> forecasts = null;
+            if (woeid.HasValue)
             {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
+                forecasts = await _apiClient.GetWeatherData(woeid.Value);
+            }
+            return forecasts != null ? forecasts : new List<WeatherForecast>();
+        }
+
+        [HttpGet]
+        public async IAsyncEnumerable<WeatherForecast> Get()
+        {
+            foreach (var forecast in await GetForecastList())
+            {
+                yield return forecast;
+            }
         }
     }
 }
