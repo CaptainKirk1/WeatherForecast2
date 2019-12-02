@@ -15,6 +15,7 @@ const LocationSelection = (props) => {
 
     return (
         <React.Fragment>
+            Please Enter some letters, and then, click on an item on the list...
             <Input type="text" onChange={event => {
                 setSearchValue(event.target.value)
                 if (searchValue.length > 2) { getLocationList() }
