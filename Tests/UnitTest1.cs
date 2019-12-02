@@ -43,5 +43,23 @@ namespace Tests
             return task;
         }
 
+        [TestMethod]
+        public void APIClientIntegrationTest3()
+        {
+            var task = Execute3();
+            task.Wait();
+            var result = task.Result;
+            Assert.IsTrue(
+                result.All(x => x.Summary.Length > 0));
+        }
+
+        private async Task<IEnumerable<WeatherForecast>> Execute3()
+        {
+            var client = new APIClient();
+            var task = await client.GetWeatherData(2487956);
+            return task;
+        }
+
+
     }
 }
