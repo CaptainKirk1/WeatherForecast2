@@ -20,9 +20,9 @@ namespace InterviewProject.Controllers
             _logger = logger;
         }
 
-        private async Task<IEnumerable<WeatherForecast>> GetForecastList()
+        private async Task<IEnumerable<WeatherForecast>> GetForecastList(string search)
         {
-            int? woeid = await _apiClient.GetWhereOnEarthId("San Francisco");
+            int? woeid = await _apiClient.GetWhereOnEarthId(search);
             
             IEnumerable<WeatherForecast> forecasts = null;
             if (woeid.HasValue)
@@ -33,9 +33,9 @@ namespace InterviewProject.Controllers
         }
 
         [HttpGet]
-        public async IAsyncEnumerable<WeatherForecast> Get()
+        public async IAsyncEnumerable<WeatherForecast> Get(string search)
         {
-            foreach (var forecast in await GetForecastList())
+            foreach (var forecast in await GetForecastList(search))
             {
                 yield return forecast;
             }
